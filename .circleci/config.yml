@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build:
+  build-and-test:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
@@ -10,9 +10,12 @@ jobs:
       - run:
           name: Build image
           command: docker build -t private-blockchain:0.0.1 .
+      - run:
+          name: Test
+          command: docker run private-blockchain:0.0.1 npm run test
 
 workflows:
   version: 2
-  build:
+  deploy-private-blockchain:
     jobs:
-      - build
+      - build-and-test
