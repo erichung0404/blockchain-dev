@@ -8,11 +8,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-        name: Build image
-        command: docker build -t private-blockchain:0.0.1 .
+          name: Build image
+          command: docker build -t private-blockchain:0.0.1 .
 
 workflows:
-  version: 2.1
+  version: 2
   build:
     jobs:
       - build
