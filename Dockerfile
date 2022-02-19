@@ -6,6 +6,7 @@ COPY app.js \
      BlockchainController.js \
      package.json \
      package-lock.json \
+     jest.config.js \
      /app/
 
 # copy source dir
