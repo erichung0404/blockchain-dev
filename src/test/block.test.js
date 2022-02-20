@@ -1,23 +1,41 @@
 const { Block } = require("../block.js");
+const { encodeData, encryptBlock } = require("../util");
 
 const createData = ({ data }) => ({ data });
-const createBlock = ({ data = createData("Genesis Block") } = {}) =>
-  new Block(data);
+const createBlock = ({ data = createData("Genesis Block") } = {}) => {
+  const block = new Block(data);
+  block.hash = encryptBlock(block);
+  return block;
+};
 
 describe("block", () => {
   describe("validate", () => {
-    // FIXME: test after implementation
-    it.skip("should be valid if block has not been tampered", async () => {
+    it("should be valid if block has not been tampered", async () => {
       const block = createBlock();
       const isValid = await block.validate();
       expect(isValid).toBeTruthy();
     });
 
-    // FIXME: test after implementation
-    it.skip("should be invalid if block is tampered", async () => {
+    it("should be invalid if block is body tampered", async () => {
       const block = createBlock();
-      const fakeData = createData({ data: "vicious data" });
-      block.data = Buffer.from(JSON.stringify(fakeData)).toString("hex");
+
+      // tamper the block data with new data
+      const fakeData = {
+        ...block.body,
+        ...createData({ data: "vicious data" }),
+      };
+      block.body = encodeData(fakeData);
+
+      const isValid = await block.validate();
+      expect(isValid).toBeFalsy();
+    });
+
+    it("should be invalid if new attributes is added to the block", async () => {
+      const block = createBlock();
+
+      // tamper the block with new attribute
+      block.newAttribute = "new attribute";
+
       const isValid = await block.validate();
       expect(isValid).toBeFalsy();
     });
