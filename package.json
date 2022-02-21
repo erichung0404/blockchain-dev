@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --config=jest.config.js --colors",
     "test:watch": "jest --config=jest.config.js --watch --colors",
-    "test:coverage": "jest --config=jest.config.js --coverage"
+    "test:coverage": "jest --config=jest.config.js --coverage",
+    "test:ci": "jest --config=jest.config.js --ci --runInBand "
   },
   "author": "Eric Hung - eric.hung0404@gmail.com",
   "license": "ISC",
@@ -20,6 +21,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "jest": "^27.5.1"
+    "jest": "^27.5.1",
+    "jest-junit": "^13.0.0"
   }
 }

@@ -12,7 +12,12 @@ jobs:
           command: docker build -t private-blockchain:0.0.1 .
       - run:
           name: Test
-          command: docker run private-blockchain:0.0.1 npm run test
+          command: docker run --name private-blockchain-container private-blockchain:0.0.1 npm run test:ci
+      - run:
+          name: Copy test results
+          command: docker cp private-blockchain-container:/app/reports .
+      - store_test_results:
+          path: ./reports/junit/
 
 workflows:
   version: 2
