@@ -1,8 +1,9 @@
+const Constant = require("../common/constant.js");
 const { Block } = require("../block.js");
 const { encodeData, encryptBlock } = require("../util");
 
 const createData = ({ data }) => ({ data });
-const createBlock = ({ data = createData("Genesis Block") } = {}) => {
+const createBlock = ({ data = createData({ data: Constant.kGenesisBlock }) } = {}) => {
   const block = new Block(data);
   block.hash = encryptBlock(block);
   return block;
@@ -42,6 +43,17 @@ describe("block", () => {
   });
 
   describe("getBData", () => {
-    it.todo("should get encoded data");
+    it("should get decoded data if the block is not genesis block", () => {
+      const fakeData = createData({ data: 'eric' });
+      const block = createBlock({ data: fakeData });
+      const decodedData = block.getBData();
+      expect(decodedData).toEqual(fakeData.data);
+    });
+
+    it("should get empty string if the block is genesis block", () => {
+      const block = createBlock();
+      const decodedData = block.getBData();
+      expect(decodedData).toBe("");
+    });
   });
 });

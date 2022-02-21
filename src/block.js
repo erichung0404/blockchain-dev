@@ -12,7 +12,8 @@
 const SHA256 = require("crypto-js/sha256");
 const hex2ascii = require("hex2ascii");
 
-const { encryptBlock } = require("./util");
+const Constant = require("./common/constant.js");
+const { decodeData, encryptBlock } = require("./util");
 
 class Block {
   // Constructor - argument data will be the object containing the transaction data
@@ -66,6 +67,11 @@ class Block {
     // Decoding the data to retrieve the JSON representation of the object
     // Parse the data to an object to be retrieve.
     // Resolve with the data if the object isn't the Genesis block
+    const { data } = decodeData(this.body);
+    if (data === Constant.kGenesisBlock) {
+      return "";
+    }
+    return data;
   }
 }
 
