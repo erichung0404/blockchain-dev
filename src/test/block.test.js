@@ -1,13 +1,9 @@
 const Constant = require("../common/constant.js");
-const { Block } = require("../block.js");
-const { encodeData, encryptBlock } = require("../util");
-
-const createData = ({ data }) => ({ data });
-const createBlock = ({ data = createData({ data: Constant.kGenesisBlock }) } = {}) => {
-  const block = new Block(data);
-  block.hash = encryptBlock(block);
-  return block;
-};
+const {
+  createBlock,
+  createData,
+  encodeData,
+} = require("../util");
 
 describe("block", () => {
   describe("validate", () => {

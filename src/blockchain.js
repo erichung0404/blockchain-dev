@@ -10,7 +10,10 @@
 
 const SHA256 = require('crypto-js/sha256');
 const BlockClass = require('./block.js');
+const Error = require('./exception/error.js');
 const bitcoinMessage = require('bitcoinjs-message');
+
+const encryptBlock = require('./util/encryptBlock.js');
 
 class Blockchain {
 
@@ -64,7 +67,18 @@ class Blockchain {
     _addBlock(block) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-           
+          try {
+            if (self.height >= 0) {
+              block.previousBlockHash = self.chain[self.height].hash;
+            }
+            block.timestamp = new Date().getTime().toString().slice(0, -3);
+            block.hash = encryptBlock(block);
+            self.chain.push(block);
+            self.height = self.chain.length - 1;
+            resolve(block);
+          } catch (e) {
+            reject(new Error.BlockchainError(`Failed to add block: ${e.message}`));
+          }
         });
     }
 
@@ -166,4 +180,4 @@ class Blockchain {
 
 }
 
-module.exports.Blockchain = Blockchain;   
+module.exports.Blockchain = Blockchain;

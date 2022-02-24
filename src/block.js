@@ -13,7 +13,8 @@ const SHA256 = require("crypto-js/sha256");
 const hex2ascii = require("hex2ascii");
 
 const Constant = require("./common/constant.js");
-const { decodeData, encryptBlock } = require("./util");
+const decodeData = require("./util/decodeData.js");
+const encryptBlock = require("./util/encryptBlock.js");
 
 class Block {
   // Constructor - argument data will be the object containing the transaction data
