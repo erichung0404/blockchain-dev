@@ -13,6 +13,7 @@ const BlockClass = require("./block.js");
 const Error = require("./exception/error.js");
 const bitcoinMessage = require("bitcoinjs-message");
 
+const decodeData = require("./util/decodeData.js");
 const encryptBlock = require("./util/encryptBlock.js");
 
 class Blockchain {
@@ -90,7 +91,14 @@ class Blockchain {
    * @param {*} address
    */
   requestMessageOwnershipVerification(address) {
-    return new Promise((resolve) => {});
+    return new Promise((resolve) => {
+      resolve(
+        `${address}:${new Date()
+          .getTime()
+          .toString()
+          .slice(0, -3)}:starRegistry`
+      );
+    });
   }
 
   /**
@@ -112,7 +120,31 @@ class Blockchain {
    */
   submitStar(address, message, signature, star) {
     let self = this;
-    return new Promise(async (resolve, reject) => {});
+    return new Promise(async (resolve, reject) => {
+      const messageTime = parseInt(message.split(":")[1]);
+      const currentTime = parseInt(
+        new Date().getTime().toString().slice(0, -3)
+      );
+      const elapsedTimeInSec = Math.round((currentTime - messageTime) / 1000);
+
+      if (elapsedtimeInSec > 5) {
+        reject(
+          new Error.BlockchainError(
+            `Elapsed time exceeds 5 seconds: [sec]:${elapsedTimeInSec}`
+          )
+        );
+      }
+
+      // TODO: mock bitcoinMessage
+      if (!bitcoinMessage.verify(message, address, signature)) {
+        reject(new Error.BlockchainError("Invalid message"));
+      }
+
+      const newBlock = self._addBlock(
+        new BlockClass.Block({ owner: address, star })
+      );
+      resolve(newBlock);
+    });
   }
 
   /**
@@ -171,8 +203,13 @@ class Blockchain {
    */
   getStarsByWalletAddress(address) {
     let self = this;
-    let stars = [];
-    return new Promise((resolve, reject) => {});
+    return new Promise((resolve, reject) => {
+      resolve(
+        self.chain
+          .filter((block) => decodeData(block.body).ownership === address)
+          .map((block) => decodeData(block.body))
+      );
+    });
   }
 
   /**
