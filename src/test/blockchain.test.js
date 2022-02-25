@@ -90,7 +90,24 @@ describe("blockchain", () => {
   });
 
   describe("validateChain", () => {
-    it.todo("should sucess");
-    it.todo("should fail");
+    it("should be valid", async () => {
+      const blockchain = new Blockchain();
+      const fakeBlock = createBlock();
+      fakeBlock.hash = null;
+      blockchain._addBlock(fakeBlock);
+      const errorLog = await blockchain.validateChain();
+      expect(errorLog.length).toBe(0);
+    });
+
+    it("should be invalid", async () => {
+      const blockchain = new Blockchain();
+
+      // tamper the block hash
+      const genesisBlock = await blockchain.getBlockByHeight(0);
+      genesisBlock.hash = "invalid hash";
+
+      const errorLog = await blockchain.validateChain();
+      expect(errorLog.length).toBe(1);
+    });
   });
 });

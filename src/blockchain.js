@@ -71,9 +71,9 @@ class Blockchain {
           block.previousBlockHash = self.chain[self.height].hash;
         }
         block.timestamp = new Date().getTime().toString().slice(0, -3);
+        block.height = ++self.height;
         block.hash = encryptBlock(block);
         self.chain.push(block);
-        self.height = self.chain.length - 1;
         resolve(block);
       } catch (e) {
         reject(new Error.BlockchainError(`Failed to add block: ${e.message}`));
@@ -184,7 +184,23 @@ class Blockchain {
   validateChain() {
     let self = this;
     let errorLog = [];
-    return new Promise(async (resolve, reject) => {});
+    return new Promise(async (resolve, reject) => {
+      for (const [idx, block] of self.chain.entries()) {
+        if (!(await block.validate())) {
+          const log = "Blockchain validation failed: invalid block.";
+          errorLog.push(log);
+          continue;
+        }
+
+        if (idx > 0 && block.previousBlockHash !== self.chain[idx - 1].hash) {
+          const log = `Blockchain validation failed: invalid previous block hash: [hash]:${block.previousBlockHash}`;
+          errorLog.push(log);
+          continue;
+        }
+      }
+
+      resolve(errorLog);
+    });
   }
 }
 
