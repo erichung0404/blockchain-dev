@@ -11,7 +11,7 @@ describe("blockchain", () => {
       try {
         addedBlock = await blockchain._addBlock(fakeBlock);
       } catch (e) {
-        throw new Error(`_addBlock failed: ${e}`);
+        throw new Error.BlockchainError(`_addBlock failed: ${e}`);
       }
       expect(fakeBlock.previousBlockHash).toBe(
         blockchain.chain[blockchain.height - 1].hash
@@ -45,8 +45,43 @@ describe("blockchain", () => {
   });
 
   describe("getBlockByHash", () => {
-    it.todo("should sucess");
-    it.todo("should fail");
+    it("should get correct block", async () => {
+      const blockchain = new Blockchain();
+      const fakeBlock = createBlock();
+      blockchain._addBlock(fakeBlock);
+
+      let targetBlock;
+      try {
+        targetBlock = await blockchain.getBlockByHash(fakeBlock.hash);
+      } catch (e) {
+        throw new Error.BlockchainError(`getBlockByHash failed: ${e}`);
+      }
+      expect(targetBlock).toEqual(fakeBlock);
+    });
+
+    it("should throw if multiple blocks are found", async () => {
+      const blockchain = new Blockchain();
+      const fakeBlocks = Array(2)
+        .fill()
+        .map((_) => createBlock());
+
+      // assign same hash to blocks and add to blockchain
+      const fakeHash = "fake hash";
+      fakeBlocks.map((fakeBlock) => (fakeBlock.hash = fakeHash));
+      fakeBlocks.forEach((fakeBlock) => blockchain._addBlock(fakeBlock));
+
+      await expect(blockchain.getBlockByHash(fakeHash)).rejects.toBeInstanceOf(
+        Error.BlockchainError
+      );
+    });
+
+    it("should throw if no block is found", async () => {
+      const blockchain = new Blockchain();
+      const fakeHash = "hash not exists";
+      await expect(blockchain.getBlockByHash(fakeHash)).rejects.toBeInstanceOf(
+        Error.BlockchainError
+      );
+    });
   });
 
   describe("getStarsByWalletAddress", () => {
