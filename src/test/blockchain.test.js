@@ -1,18 +1,8 @@
-const Error = require('../exception/error.js');
-const { createBlock } = require('../util');
-const { Blockchain } = require('../blockchain.js');
+const Error = require("../exception/error.js");
+const { createBlock } = require("../util");
+const { Blockchain } = require("../blockchain.js");
 
 describe("blockchain", () => {
-  describe("initializeChain", () => {
-    it.todo("should sucess");
-    it.todo("should fail");
-  });
-
-  describe("getChainHeight", () => {
-    it.todo("should sucess");
-    it.todo("should fail");
-  });
-
   describe("_addBlock", () => {
     it("should add block sucessfully", async () => {
       const blockchain = new Blockchain();
@@ -23,7 +13,9 @@ describe("blockchain", () => {
       } catch (e) {
         throw new Error(`_addBlock failed: ${e}`);
       }
-      expect(fakeBlock.previousBlockHash).toBe(blockchain.chain[blockchain.height-1].hash);
+      expect(fakeBlock.previousBlockHash).toBe(
+        blockchain.chain[blockchain.height - 1].hash
+      );
       expect(blockchain.height).toBe(1);
       expect(addedBlock).toEqual(fakeBlock);
       expect(blockchain.chain[blockchain.height]).toEqual(fakeBlock);
@@ -53,11 +45,6 @@ describe("blockchain", () => {
   });
 
   describe("getBlockByHash", () => {
-    it.todo("should sucess");
-    it.todo("should fail");
-  });
-
-  describe("getBlockByHeight", () => {
     it.todo("should sucess");
     it.todo("should fail");
   });
